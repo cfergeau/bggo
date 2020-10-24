@@ -45,9 +45,26 @@ func retrievePlays(username string) (resp *bggo.PlaysResponse) {
 	return
 }
 
+func isPlaying(plays *bggo.PlaysResponse, index int, username string) bool {
+	play := plays.Plays[index]
+	if len(play.Players) == 0 {
+		return false
+	}
+	for _, player := range play.Players {
+		if player.Username == username {
+			return true
+		}
+	}
+
+	return false
+}
+
 func printPlays(resp *bggo.PlaysResponse) {
 	fmt.Printf("Last %d plays for %s\n", len(resp.Plays), resp.Username)
-	for _, play := range resp.Plays {
+	for index, play := range resp.Plays {
+		if !isPlaying(resp, index, "ldng") {
+			continue
+		}
 		fmt.Printf("\t%s: ", play.Date)
 		for i, item := range play.Items {
 			fmt.Printf("%s", item.Name)
